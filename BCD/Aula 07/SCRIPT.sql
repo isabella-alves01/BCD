@@ -63,3 +63,28 @@ CREATE TABLE Relacao_Item_Pedido (
     FOREIGN KEY (id_Produto) REFERENCES Produto(id_Produto),
     FOREIGN KEY (id_Fornecedor) REFERENCES Fornecedor(id_Fornecedor)
 );
+
+
+
+QUESTÃO 1 
+ ---CATEGORIA--- POSSUI --- PRODUTO 
+ 1,N E 1,1
+
+
+ QUESTÃO 2 
+
+ --FUNCIONARIO --- REGISTRA -- PEDIDO
+
+ QUESTÃO 3 
+
+ ---FORNECEDOR --- FORNECE --- PRODUTO 
+
+ QUESTÃO 4 
+
+---CLIENTE --- RESERVA --- MESA
+0,N E 1,1
+
+QUESTÃO 5
+
+---PEDIDO --- POSSUI --- ITEM_PEDIDO
+1,N E 1,1 
