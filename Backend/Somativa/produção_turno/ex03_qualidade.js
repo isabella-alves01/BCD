@@ -15,16 +15,16 @@
 
 
 
-const entrada = require('readline-sync')
+const entrada = require('readline-sync');
 
-console.log("---PEÇAS APROVADAS OU REPROVADAS---")
+console.log("---PEÇAS APROVADAS OU REPROVADAS---");
 
 const precoPeca = entrada.questionFloat("Qual e o preco da peca?");
 
-if(valor_total >=105 && valor_total<=95){
-    console.log(`PEÇA APROVADA'${precoPeca}. `)
-} else {
-    console.log(`PEÇA REPROVADA' ${precoPeca}`);
+if(precoPeca <=105 && precoPeca>=95){
+    console.log(`\nPEÇA APROVADA'${precoPeca}`)
+}else{
+    console.log(`\nPEÇA REPROVADA' ${precoPeca}`)
 }
 
 
