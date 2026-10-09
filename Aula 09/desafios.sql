@@ -56,7 +56,8 @@ SET @pedido_compra = LAST_INSERT_ID();
 SELECT * from pedido
 
 -- 6. Use LAST_INSERT_ID() para guardar o id do pedido em @pedido_atividade
---    e insira pelo menos dois itens nesse pedido.
+--    e insir
+a pelo menos dois itens nesse pedido.
 
 INSERT INTO pedido (data_pedido,status_pedido, valor_total,id_cliente) VALUES
 (NOW(),'ABERTO',20.00,2),
@@ -78,7 +79,6 @@ WHERE id_cliente = 1
 
 SELECT * FROM cliente
 
-
 -- 8. Altere cidade e telefone de outro cliente em um único UPDATE.
 
 UPDATE Cliente
@@ -88,14 +88,19 @@ WHERE id_cliente = 3;
 
 -- 9. Aumente em 8% o preço dos produtos da categoria 'Especiais da Casa'.
 
-UPDATE preco
-SET preco = preco * 0.08,
+UPDATE produto
+SET preco = preco * 0.08
 WHERE id_categoria = 12;
 
 
 -- 10. Altere o status do pedido criado para 'PREPARANDO'.
 
+UPDATE pedido
+SET status_pedido = 'PREPARANDO'
+WHERE id_pedido = 1;
 
+
+SELECT * FROM pedido
 
 
 
@@ -103,22 +108,39 @@ WHERE id_categoria = 12;
 --     Você pode calcular previamente com SELECT SUM(quantidade * preco_unitario).
 
 
+-- não terminei a tabela sem conclusao
+
+
 -- 12. Escolha um dos produtos criados e faça uma exclusão lógica (ativo = FALSE).
+
+UPDATE produto 
+SET ativo = FALSE 
+WHERE id_produto = 1;
 
 
 -- PARTE C - DELETE
 
--- 13. Crie um cliente de teste sem pedidos.
---     Depois localize e exclua apenas esse cliente.
+-- 13. Crie um cliente de teste sem pedidos. Depois localize e exclua apenas esse cliente.
+INSERT INTO cliente (nome, email, telefone, cidade, ativo) 
+VALUES ('Cliente Teste', 'teste@email.com', '1999999999', 'Limeira', TRUE);
+
+DELETE FROM cliente 
+WHERE email = 'teste@email.com';
 
 
 -- 14. Tente excluir um cliente da base original que possua pedidos.
---     Deixe o DELETE comentado após o teste e descreva o erro abaixo.
--- Resultado observado:
+-- Deixe o DELETE comentado após o teste e descreva o erro abaixo.
+-- DELETE FROM cliente WHERE id_cliente = 10;
+-- Resultado observado: Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails (`smartcoffee_dml_isabella1`.`pedido`, CONSTRAINT `fk_pedido_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`))
 
 
 -- 15. Explique em comentário por que a FK bloqueou a exclusão.
--- Resposta:
+-- Resposta: A chave estrangeira (FK) bloqueou a exclusão porque existem registros na tabela 'pedido' vinculados a este cliente. Para manter a integridade referencial do banco de dados e evitar pedidos "órfãos" sem um cliente associado, o SGBD impede que o registro pai seja excluído.
 
 
 -- 16. Crie uma categoria temporária chamada 'Excluir Depois' e remova-a.
+INSERT INTO categoria (nome) 
+VALUES ('Excluir Depois');
+
+DELETE FROM categoria 
+WHERE nome = 'Excluir Depois';
