@@ -56,8 +56,7 @@ SET @pedido_compra = LAST_INSERT_ID();
 SELECT * from pedido
 
 -- 6. Use LAST_INSERT_ID() para guardar o id do pedido em @pedido_atividade
---    e insir
-a pelo menos dois itens nesse pedido.
+--    e insira pelo menos dois itens nesse pedido.
 
 INSERT INTO pedido (data_pedido,status_pedido, valor_total,id_cliente) VALUES
 (NOW(),'ABERTO',20.00,2),
@@ -79,6 +78,7 @@ WHERE id_cliente = 1
 
 SELECT * FROM cliente
 
+
 -- 8. Altere cidade e telefone de outro cliente em um único UPDATE.
 
 UPDATE Cliente
@@ -88,59 +88,104 @@ WHERE id_cliente = 3;
 
 -- 9. Aumente em 8% o preço dos produtos da categoria 'Especiais da Casa'.
 
-UPDATE produto
-SET preco = preco * 0.08
+UPDATE preco
+SET preco = preco * 0.08,
 WHERE id_categoria = 12;
 
+-- 10. Mostre os pedidos FINALIZADOS com valor acima de R$ 20,00,
+-- do maior para o menor valor.
 
--- 10. Altere o status do pedido criado para 'PREPARANDO'.
+SELECT id_pedido, valor_total
+FROM pedido
+WHERE status_pedido = 'Finalizado' and valor_total >= 20.00
+ORDER BY valor_total DESC;
 
-UPDATE pedido
-SET status_pedido = 'PREPARANDO'
-WHERE id_pedido = 1;
+-- PARTE C - CÁLCULOS E AGRUPAMENTOS
+-- 11. Informe quantos produtos estão cadastrados.
+SELECT COUNT() AS total_produto
+FROM produto;
 
+-- 12. Mostre menor preço, maior preço e preço médio dos produtos.
+SELECT ROUND(MIN(preco),2) AS Preços_Baixos,
+ROUND(MAX(preco),2) AS Preco_Alto,
+ROUND(AVG(preco),2) AS Média_preco
+FROM produto;
 
-SELECT * FROM pedido
+-- 13. Informe quantos clientes existem em cada cidade.
+SELECT cidade, COUNT() AS QTDE_CLIENTES
+FROM cliente
+GROUP BY cidade;
 
+-- 14. Mostre somente as cidades que possuem dois ou mais clientes.
+SELECT cidade, COUNT() AS QTDE_CLIENTES
+FROM cliente
+GROUP BY cidade
+HAVING COUNT() >=2;
 
-
--- 11. Atualize valor_total do pedido de acordo com os itens cadastrados.
---     Você pode calcular previamente com SELECT SUM(quantidade * preco_unitario).
-
-
--- não terminei a tabela sem conclusao
-
-
--- 12. Escolha um dos produtos criados e faça uma exclusão lógica (ativo = FALSE).
-
-UPDATE produto 
-SET ativo = FALSE 
-WHERE id_produto = 1;
-
-
--- PARTE C - DELETE
-
--- 13. Crie um cliente de teste sem pedidos. Depois localize e exclua apenas esse cliente.
-INSERT INTO cliente (nome, email, telefone, cidade, ativo) 
-VALUES ('Cliente Teste', 'teste@email.com', '1999999999', 'Limeira', TRUE);
-
-DELETE FROM cliente 
-WHERE email = 'teste@email.com';
-
-
--- 14. Tente excluir um cliente da base original que possua pedidos.
--- Deixe o DELETE comentado após o teste e descreva o erro abaixo.
--- DELETE FROM cliente WHERE id_cliente = 10;
--- Resultado observado: Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails (`smartcoffee_dml_isabella1`.`pedido`, CONSTRAINT `fk_pedido_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`))
+-- 15. Calcule o faturamento total considerando apenas pedidos FINALIZADOS.
+SELECT SUM(valor_total) AS FATURAMENTO
+FROM pedido
+WHERE status_pedido = 'Finalizado'
 
 
--- 15. Explique em comentário por que a FK bloqueou a exclusão.
--- Resposta: A chave estrangeira (FK) bloqueou a exclusão porque existem registros na tabela 'pedido' vinculados a este cliente. Para manter a integridade referencial do banco de dados e evitar pedidos "órfãos" sem um cliente associado, o SGBD impede que o registro pai seja excluído.
+-- PARTE D - RELACIONAMENTOS
+
+-- 16. Liste cada pedido exibindo id, data, nome do cliente, status e valor total.
+
+SELECT P. ID_PEDIDO, P.DATA_PEDIDO, C.NOME AS CLIENTE, P.VALOR_TOTAL, P.STATUS_PEDIDO
+FROM PEDIDO AS P
+INNER JOIN CLIENTE AS C
+ON C.ID_CLIENTE = P.ID_CLIENTE
 
 
--- 16. Crie uma categoria temporária chamada 'Excluir Depois' e remova-a.
-INSERT INTO categoria (nome) 
-VALUES ('Excluir Depois');
+-- 17. Liste cada produto acompanhado do nome de sua categoria.
 
-DELETE FROM categoria 
-WHERE nome = 'Excluir Depois';
+SELECT PR.NOME AS PRODUTO, CA.NOME AS CATEGORIA
+FROM PRODUTO AS PR 
+INNER JOIN CATEGORIA AS CA
+ON CA.ID_CATEGORIA = PR.ID_CATEGORIA
+ORDER BY CA.NOME, PR.NOME;
+
+
+
+-- 18. Gere um relatório dos itens vendidos: pedido, produto, quantidade,
+--     preço unitário e subtotal.
+
+
+SELECT C.NOME AS CLIENTE, COUNT(P.ID_PEDIDO) AS QTDE_PEDIDOS, SUM(P.VALOR_TOTAL) AS VALOR_COMPRADO
+FROM CLIENTE AS C
+INNER JOIN PEDIDO AS P
+ON P.ID_CLIENTE = C.ID_CLIENTE
+WHERE P.STATUS_PEDIDO = 'ABERTO'
+GROUP BY C.ID_CLIENTE, C.NOME
+ORDER BY VALOR_COMPRADO DESC;
+
+
+-- 19. Mostre todos os clientes, inclusive aqueles que nunca fizeram pedidos.
+
+
+-- 20. Liste apenas os clientes que nunca fizeram pedidos.
+
+
+-- PARTE E - DESAFIO GERENCIAL
+
+-- 21. Informe quantos pedidos FINALIZADOS cada cliente realizou e quanto
+--     cada cliente gastou. Ordene do maior gasto para o menor.
+
+
+-- 22. Mostre a quantidade de produtos e o preço médio de cada categoria.
+
+
+-- 23. Descubra quais produtos possuem preço superior ao preço médio geral.
+
+
+-- 24. Classifique os produtos como Econômico, Intermediário ou Premium.
+--     Defina e informe suas faixas de preço.
+
+
+-- 25. CONSULTA AUTORAL
+-- Pergunta de negócio:
+--
+-- Por que essa informação é útil?
+--
+-- Consulta:
